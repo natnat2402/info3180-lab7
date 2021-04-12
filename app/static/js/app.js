@@ -1,11 +1,75 @@
 /* Add your Application JavaScript */
 // Instantiate our main Vue Instance
+const Home = {
+    name: 'Home',
+    template: `
+    <div class="jumbotron">
+        <h1>Lab 7</h1>
+        <p class="lead">In this lab we will demonstrate VueJS working with Forms and Form Validation from Flask-WTF.</p>
+    </div>
+    `,
+    data() {
+        return {}
+    }
+};
+
 const app = Vue.createApp({
     data() {
         return {
 
         }
+    }/*,components: {
+        'home': Home,
+        'upload': upload-form
+      }*/
+});
+
+app.component('upload-form', {
+    name: 'upload-form',
+    template: `
+        <div class = "form">
+            <form id = "uploadForm" action="" method = "POST" enctype = "multipart/form-data" @submit.prevent="uploadPhoto">
+                {{ form.csrf_token }}
+                
+                {{form.descrip.label}}
+                {{form.descrip}}
+            
+                {{ form.file.label}}
+                {{ form.file}}
+
+                {{ form.submitbtn}}
+            </form>
+            /*
+            <form id = "uploadForm" action="" method = "POST" enctype = "multipart/form-data" @submit.prevent="uploadPhoto">
+                <textarea name="message" ></textarea>
+                <br><br>
+                <input type="file" id="file" >
+                <br><br>
+                <input type="submit">
+            </form>
+            */
+        </div>
+    `,
+    methods: {
+        uploadPhoto(){
+            let uploadForm = document.getElementById('uploadForm');
+            let form_data = new FormData(uploadForm);
+            fetch('/api/upload', {
+                method: 'POST', body: form_data,headers: {'X-CSRFToken': token},credentials: 'same-origin'
+               })
+                .then(function (response) {
+                return response.json();
+                })
+                .then(function (jsonResponse) {
+                // display a success message
+                console.log(jsonResponse);
+                })
+                .catch(function (error) {
+                console.log(error);
+                });
+        }
     }
+    
 });
 
 app.component('app-header', {
@@ -21,6 +85,9 @@ app.component('app-header', {
         <ul class="navbar-nav mr-auto">
           <li class="nav-item active">
             <router-link class="nav-link" to="/">Home <span class="sr-only">(current)</span></router-link>
+          </li>
+          <li class="nav-item active">
+            <router-link class="nav-link" to="/">Upload <span class="sr-only">(current)</span></router-link>
           </li>
         </ul>
       </div>
@@ -44,19 +111,6 @@ app.component('app-footer', {
     }
 });
 
-const Home = {
-    name: 'Home',
-    template: `
-    <div class="jumbotron">
-        <h1>Lab 7</h1>
-        <p class="lead">In this lab we will demonstrate VueJS working with Forms and Form Validation from Flask-WTF.</p>
-    </div>
-    `,
-    data() {
-        return {}
-    }
-};
-
 const NotFound = {
     name: 'NotFound',
     template: `
@@ -73,7 +127,7 @@ const NotFound = {
 const routes = [
     { path: "/", component: Home },
     // Put other routes here
-
+    { path: "/upload", component: upload-form },
     // This is a catch all route in case none of the above matches
     { path: '/:pathMatch(.*)*', name: 'not-found', component: NotFound }
 ];
