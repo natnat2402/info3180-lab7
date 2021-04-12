@@ -32,12 +32,10 @@ def index(path):
     """
     return render_template('index.html')
 
-@app.route('/api/upload', methods=['POST','GET'])
+@app.route('/api/upload', methods=['POST'])
 def upload():
 # Instantiate your form class
     form = UploadForm()
-    if request.method == 'GET':
-        flash('Invalid method passed','error')
     # Validate file upload on submit
     if request.method == 'POST' and form.validate_on_submit():
         uploaded_file = request.files['file']
